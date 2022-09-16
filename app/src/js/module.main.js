@@ -95,7 +95,13 @@ const sections = {
         showMenu: true,
         prevSection: 'personal_update',
         needAuth: true
-    }
+    },
+  notifications: {
+    title: 'Уведомления',
+    showMenu: true,
+    prevSection: 'personal',
+    needAuth: true,
+  },
 };
 
 let currentSection = '',

@@ -20,6 +20,7 @@ let resetCodeTimer = null;
 let resetCodeTimerValue = 0;
 let viewNewApp = 1;
 let currentBrightness;
+let newNotifies = false;
 
 const carouselSections = [
     'news',
@@ -116,6 +117,7 @@ let currentSection = '',
         personalHash: '',
         walletHash: '',
         storesHash: '',
+        notifyHash: '',
         newsHash: '',
         lastPurchase: '',
         lastTransaction: ''
@@ -1465,6 +1467,11 @@ async function checkUpdates(callback) {
             drawStores(data.stores);
         }
         
+        if (data.notifyHash) {
+            updates.notifyHash = data.notifyHash;
+            drawNotifications(data.notifications);
+        }
+        
         if (data.personalHash) {
             setNeedUpdate(contents, result, 'personal');
             contents.personal = data.personal;
@@ -1529,6 +1536,7 @@ async function getUpdates() {
     if (initApp) {
         data.newsHash = "";
         data.storesHash = "";
+        data.notifyHash = "";
         data.lastPurchase = "";
         data.lastTransaction = "";
         initApp = false;
@@ -1543,3 +1551,65 @@ async function getUpdates() {
     return await api("getUpdates", data);
 }
 
+function drawNotifications(notifiesList) {
+    
+    if (!notifiesList) {
+        return false;
+    }
+
+    const container = C(".notifications");
+    container.html("");
+    
+    notifiesList.forEach((notify) => {
+        const clas = notify.is_unread ? " class = 'unread'" : "";
+        const title = notify.title ? `${notify.title}<br>` : "";
+        const temp = `<li${clas} data-id="${notify.id}">${title}${notify.description}</li>`;
+        const newsContEl = C().strToNode(temp);
+
+        container.el.prepend(newsContEl.el);
+        
+        newsContEl.bind("click", async (e) => {
+            const el = e.target;
+            const id = el.dataset.id;
+
+            C(el).delclass("unread");
+            
+            await api("readNotificaton", {
+                id,
+            });
+            checkUnreadNotify();
+        });
+
+        if (notify.is_unread) {
+            newNotifies = true;
+        }
+    });
+
+    const icon = C(".icon-bell.topNav__msg");
+
+    if (newNotifies) {
+        icon.addclass("unread");
+    } else {
+        icon.delclass("unread");
+    }
+}
+
+function checkUnreadNotify() {
+    const containers = C(".notifications li").els;
+    let yep = false;
+
+    containers.forEach((li) => {
+        if (li.classList.contains("unread")) {
+            yep =  true;
+        }
+    });
+
+    newNotifies = yep;
+    const icon = C(".icon-bell.topNav__msg");
+
+    if (yep) {
+        icon.addclass("unread");
+    } else {
+        icon.delclass("unread");
+    }
+}

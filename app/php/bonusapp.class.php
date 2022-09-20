@@ -493,6 +493,14 @@ class BonusApp
                         break;
                     }
 
+                case "readNotificaton": {
+                        $resultData = $this->checkAuthorization($requestData["method"]);
+                        if ($resultData["status"]) {
+                            $resultData = $this->API_readNotificaton($resultData["data"], $requestData["data"]);
+                        }
+                        break;
+                    }
+
                 case "disableTransaction": {
                         $resultData = $this->checkAuthorization($requestData["method"]);
                         if ($resultData["status"]) {
@@ -550,8 +558,8 @@ class BonusApp
                                                 "birthdate" => $dt->format("Y-m-d"),
                                                 "email"     => $requestData["data"]["email"]
                                             ],
-                                            0,
-                                            $requestData["data"]["city"]
+                                            $requestData["data"]["city"],
+                                            0
                                         );
                                     } catch (\Throwable $th) {
                                         $resultData["description"] = "Уточните дату рождения";
@@ -826,6 +834,18 @@ class BonusApp
         return $resultData;
     }
 
+    private function API_readNotificaton($data, $id) {
+        $result = ["status" => false, "description" => ""];
+
+        if ($id > 0) {
+            $query = $this->pdo->prepare("UPDATE notifications SET is_unread = 0 WHERE (id = ? AND phone = ?);");
+            $query->execute([$id['id'], $data['phone']]);
+            $result["status"] = true;
+        }
+
+        return $result;
+    }
+
     private function API_disableTransaction($data, $id)
     {
         $result = ["status" => false, "description" => ""];
@@ -852,7 +872,7 @@ class BonusApp
         return $result;
     }
 
-    private function API_registrationHandler($phone, $pass, $profile, $discount = false, $cityId)
+    private function API_registrationHandler($phone, $pass, $profile, $cityId, $discount = false)
     {
         $result = ["status" => false, "description" => ""];
 
@@ -1160,7 +1180,7 @@ class BonusApp
         if ($authResult["status"]) $phone = $authResult["data"]["phone"];
         $data["phone"] = preg_replace("/[^0-9]/", "", $data["phone"]);
 
-        return $this->setFeedback($phone, $data);
+        return $this->setFeedback($data, $phone);
         //} else {
         //    return ["status" => false];
         //}
@@ -2225,7 +2245,8 @@ class BonusApp
             $notifies = $getNotifyFullDataResult["data"];
             $notifyHash = hash("md5", json_encode($notifies));
 			
-            if ($options["notifyHash"] != $notifyHash) {
+            //if (array_key_exists("notifyHash", $options) && $options["notifyHash"] != $notifyHash) {
+            if (array_key_exists("notifyHash", $options) && $options["notifyHash"] != $notifyHash) {
 				$result["data"]["notifications"] = $notifies;
 				$result["data"]["notifyHash"] = $notifyHash;
             }
@@ -2417,8 +2438,8 @@ class BonusApp
         if (count($queryResult)) {
             $result = [
                 "status" => true,
-                "data" => $queryResult[0]["token"],
-                "alias" => $queryResult[0]["alias"],
+                "data"   => $queryResult[0]["token"],
+                "alias"  => $queryResult[0]["alias"],
             ];
         }
 
@@ -2635,7 +2656,7 @@ class BonusApp
 		$query = $this->pdo->prepare("SELECT
 				n.id,
 				m.title,
-				m.desc,
+				m.description,
 				n.is_unread
 			FROM
 				notifications as n
@@ -2654,7 +2675,7 @@ class BonusApp
 		
         if (count($queryResult)) {
             $result["status"] = true;
-            $result["data"] = $queryResult[0];
+            $result["data"] = $queryResult;
         }
 
         return $result;
@@ -3242,7 +3263,7 @@ class BonusApp
         	    id = ?
                 ");
             $query->execute([$accountId]);
-            setcookie("token", null, strtotime('-1 days'));
+            setcookie("token", "", strtotime('-1 days'));
             $result["status"] = true;
         } catch (\Throwable $th) {
             $result = ["status" => false, "data" => $th->getMessage()];
@@ -3255,7 +3276,7 @@ class BonusApp
         $result = ["status" => false];
 
         try {
-            setcookie("token", null, strtotime('-1 days'));
+            setcookie("token", "", strtotime('-1 days'));
             $result["status"] = true;
         } catch (\Throwable $th) {
             $result = ["status" => false, "data" => $th->getMessage()];
@@ -3717,8 +3738,12 @@ class BonusApp
         return $result;
     }
 
-    private function getFullPurchasesDataNew($personId, $lastPurchaseDate = "2021-01-01 00:00:00", $limit = 50)
+    private function getFullPurchasesDataNew($personId, $lastPurchaseDate, $limit = 50)
     {
+        if(!$lastPurchaseDate) {
+            $lastPurchaseDate = "2021-01-01 00:00:00";
+        }
+
         $result = ["status" => false, "data" => []];
 
         $query = $this->pdo->prepare("SELECT
@@ -4730,7 +4755,7 @@ class BonusApp
         return $result;
     }
 
-    private function setFeedback($phone = null, $data)
+    private function setFeedback($data, $phone = null)
     {
         $result = ["status" => true, "data" => $data, "phone" => $phone];
 
@@ -4844,7 +4869,7 @@ class BonusApp
         $result['success'] = [];
         $result['errors']  = [];
 		
-		$query = $this->pdo->prepare("INSERT INTO mailing (title, desc) VALUES (?, ?)");
+		$query = $this->pdo->prepare("INSERT INTO mailing (title, description) VALUES (?, ?)");
 		$query->execute([
 			$data["title"],
 			$data["desc"]
@@ -5181,7 +5206,7 @@ class BonusApp
 
         $message = new Message();
         $message->setPriority('high');
-        if(!is_array($response)) {
+        if(!is_array($token)) {
             $message->addRecipient(new Device($token));
         } else {
             foreach ($token as $tok) {

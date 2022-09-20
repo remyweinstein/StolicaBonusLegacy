@@ -151,8 +151,10 @@ d.addEventListener('DOMContentLoaded', () => {
         
         cordova.getAppVersion.getVersionCode(function (version) {
             versionApp = version;
-            clientInfo   = `${device.platform} v${versionApp}`;
+            clientInfo = `${device.platform} v${versionApp}`;
         });
+
+        show('#linkDeleteAccount');
         
         switch (device.platform) {
             case "Android":

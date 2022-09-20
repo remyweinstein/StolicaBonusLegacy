@@ -1152,6 +1152,25 @@ function attentionFocus(el) {
     C(`#${el.id}-popup`).togclass('show');
 }
 
+async function deleteAccount() {
+    showPopup(
+      '',
+      '',
+      'Вы уверены, что хотите удалить свою учетную запись?<p><small>Если да, то все ваши привелегии исчезнут.</small></p>',
+      ['Да, уверен', 'Нет, отменить'],
+      async () => {
+        const result = await api('deleteAccount');
+  
+        if (result.status) {
+          clearLocalStorage();
+          location.reload();
+        }
+  
+        return result;
+      },
+    );
+}
+
 async function logOff() {
     showLoader();
 

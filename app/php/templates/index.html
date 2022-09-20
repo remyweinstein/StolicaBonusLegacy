@@ -384,6 +384,8 @@
                             <a href="#" onclick="drawSection('stores');return false;">Найти магазин.</a>
                             <p>&nbsp;</p>
                             <a href="#" onclick="drawSection('setting_notify');return false">Разрешения на уведомления</a>
+                            <p>&nbsp;</p>
+                            <a href="#" onclick="deleteAccount();return false">Удалить аккаунт</a>
                         </div>
                         <p class="personalUpdate__h">Изменить пароль</p>
                         <div class="popup"><span class="popup-text" id="personal-new-pass-popup">Введите новый пароль</span></div>
@@ -459,8 +461,7 @@
                                 <span class="scan_border3"></span>
                                 <span class="scan_border4"></span>
                             </button>
-                            <input type="text" name="plasticNumber" id="plasticNumber">
-                            <!--style="position:absolute;left:-10000px" tabindex="-1">-->
+                            <input type="text" name="plasticNumber" id="plasticNumber" style="position:absolute;left:-10000px" tabindex="-1">
                             <button id="set_card" class="button-primary" tabindex="-1">Добавить</button>
                         </div>
                     </div>

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.stolica.bonuses" version="5.1.4" android-versionCode="229" ios-CFBundleVersion="226" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.stolica.bonuses" version="5.4.1" android-versionCode="233" ios-CFBundleVersion="226" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Столица</name>
     <description>Алкомаркеты Столица - программа лояльности</description>
-    <author email="raspasyan8436@yandex.ru" href="https://bonus.stolica-dv.ru/">
-        Отдел разработки ПО - Столица, Пожидаев Петр
+    <author email="d.grebenyuk30@gmail.com" href="https://bonus.stolica-dv.ru/">
+        Отдел разработки ПО - Столица
     </author>
     <content src="index.html" />
     <allow-intent href="http://*/*" />

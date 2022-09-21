@@ -61,10 +61,7 @@
     </platform>
 	
     <platform name="android">
-     <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
-     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/screen/android/splash-port-200-320.png" />
-        
-   <!-- <splash src="res/screen/android/splash-port-200-320.png" density="hdpi"/>
+        <splash src="res/screen/android/splash-port-200-320.png" density="hdpi"/>
         <splash src="res/screen/android/splash-port-320-480.png" density="ldpi"/>
         <splash src="res/screen/android/splash-port-480-800.png" density="mdpi"/>
         <splash src="res/screen/android/splash-port-720-1280.png" density="xhdpi"/>
@@ -83,7 +80,6 @@
         <splash src="res/screen/android/splash-port-720-1280.png" density="port-xhdpi" />
         <splash src="res/screen/android/splash-port-960-1600.png" density="port-xxhdpi" />
         <splash src="res/screen/android/splash-port-1280-1920.png" density="port-xxxhdpi" /> 
--->
     </platform>
 
     <platform name="ios">

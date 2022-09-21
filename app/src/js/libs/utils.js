@@ -46,10 +46,10 @@ function showToast(message) {
 
 function showPopup(title, desc, message, buttonText, callback) {
     const pOverlay = C('#popupOverlay'),
-        pTitle = C('#popupTitle'),
-        pDesc = C('#popupDescription'),
-        pMessage = C('#popupMessage'),
-        pButton = C('#popupButton');
+        pTitle     = C('#popupTitle'),
+        pDesc      = C('#popupDescription'),
+        pMessage   = C('#popupMessage'),
+        pButton    = C('#popupButton');
     let cancelText;
 
     if (Array.isArray(buttonText)) {

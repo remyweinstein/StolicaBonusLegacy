@@ -156,7 +156,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
         show('#linkDeleteAccount');
         C('#plasticNumber').addclass('farAway');
-        C('#set_plastic').addclass('farAway');
+        C('#set_card').addclass('farAway');
         
         switch (device.platform) {
             case "Android":

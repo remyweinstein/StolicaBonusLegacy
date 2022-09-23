@@ -4832,6 +4832,8 @@ class BonusApp
 										WHERE 
 											a.push_id IS NOT NULL 
 											AND 
+                                            a.device regexp 'iOS'
+                                            AND
 											b.account_id = a.id 
 											AND 
 											b.enable_push_notify = 1" . $add_phones);

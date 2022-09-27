@@ -1588,23 +1588,10 @@ function drawNotifications(notifiesList) {
     notifiesList.forEach((notify) => {
         const clas = notify.is_unread ? " class = 'unread'" : "";
         const title = notify.title ? `${notify.title}<br>` : "";
-        const temp = `<li${clas} data-id="${notify.id}">${title}${notify.description}</li>`;
+        const temp = `<li${clas} onclick="clickNotify(${notify.id})" data-id="${notify.id}">${title}${notify.description}</li>`;
         const newsContEl = C().strToNode(temp);
 
         container.el.prepend(newsContEl.el);
-        
-        newsContEl.bind("click", async (e) => {
-            const el = e.target;
-            const id = el.dataset.id;
-
-            C(el).delclass("unread");
-            
-            await api("readNotificaton", {
-                id,
-            });
-            checkUnreadNotify();
-        });
-
         if (notify.is_unread) {
             newNotifies = true;
         }
@@ -1617,6 +1604,15 @@ function drawNotifications(notifiesList) {
     } else {
         icon.delclass("unread");
     }
+}
+
+async function clickNotify(id) {
+        C(`[data-id="${id}"]`).delclass("unread");
+        
+        await api("readNotificaton", {
+            id
+        });
+        checkUnreadNotify();
 }
 
 function checkUnreadNotify() {

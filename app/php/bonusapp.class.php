@@ -4831,8 +4831,6 @@ class BonusApp
 											accounts_notify b
 										WHERE 
 											a.push_id IS NOT NULL 
-											AND 
-                                            a.device regexp 'iOS'
                                             AND
 											b.account_id = a.id 
 											AND 
@@ -5267,74 +5265,53 @@ class BonusApp
     private function sendPushIos($token, $title, $body)
     {
 	    $message = '{"aps":{"alert":{"title":"'. $title .'","body":"'. $body .'"},"badge":0}}';
-
-        $http2ch = curl_init();
+        //CURLOPT_URL => "http://stolica-dv.ru/api/1?token=" . $token . "&message=" . urlencode($message),
         
-        curl_setopt($http2ch, CURLOPT_HTTP_VERSION, 3);
-        curl_setopt($http2ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-        curl_setopt_array($http2ch, array(
-            CURLOPT_URL => "http://stolica-dv.ru/api/1?token=" . $token . "&message=" . urlencode($message),
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HEADER => 0
-        ));
-
-        $output = curl_exec($http2ch);
-        curl_close($http2ch);
-       
-        return json_decode($output, true);
+        return sendHTTP2Push($message, $token);
     }
-    
-    private function sendHTTP2Push($http2_server, $app_bundle_id, $message, $token)
+
+    private function sendHTTP2Push($message, $token)
     {
-        $result["status"] = False;
-        // url (endpoint)
-        $url = "{$http2_server}/3/device/{$token}";
-        $cert = realpath('cert.pem');
+		$result["status"] = FALSE;
+		$url = "https://api.push.apple.com/3/device/" . $token;
+		$cert = realpath('cert.pem');
 
-        // headers
-        $headers = array(
-            "apns-topic: {$app_bundle_id}",
-            "User-Agent: My Sender"
-        );
-            
-        $http2ch = curl_init();
-        
-        curl_setopt($http2ch, CURLOPT_HTTP_VERSION, 3);
-        curl_setopt($http2ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-        curl_setopt_array($http2ch, array(
-            CURLOPT_URL => $url,
-            CURLOPT_PORT => 443,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POST => TRUE,
-            CURLOPT_POSTFIELDS => $message,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSLCERT => $cert,
-            CURLOPT_SSLCERTPASSWD => 'jpn19810112',
-            CURLOPT_HEADER => TRUE
-        ));
+		$headers = array(
+			"apns-topic: com.stolica.bonuses",
+			"User-Agent: My Sender"
+		);
+			
+		$http2ch = curl_init();
+		
+		curl_setopt($http2ch, CURLOPT_HTTP_VERSION, 3);
+		curl_setopt($http2ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+		curl_setopt_array($http2ch, array(
+			CURLOPT_URL            => $url,
+			CURLOPT_PORT           => 443,
+			CURLOPT_HTTPHEADER     => $headers,
+			CURLOPT_POST           => TRUE,
+			CURLOPT_POSTFIELDS     => $message,
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_TIMEOUT        => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_SSLCERT        => $cert,
+			CURLOPT_SSLCERTPASSWD  => 'jpn19810112',
+			CURLOPT_HEADER         => TRUE
+		));
 
-        $output = curl_exec($http2ch);
-        $status = curl_getinfo($http2ch, CURLINFO_HTTP_CODE);
-        
-        if ($status == "200") {
-            $result["status"] = TRUE;
-        }
-        
-        if ($result["status"]) { //&& strripos($output, ":") != FALSE) {
-            $result["data"] = ["ext_id" => end(explode(":", trim($output)))];
-        }
-
-        //$status = curl_getinfo($http2ch, CURLINFO_HTTP_CODE);
-        //if ($status == "200")
-            //echo "SENT|NA";
-        //else
-            //echo "FAILED|$status";
-        
-        return $result;
-    }
+		$output = curl_exec($http2ch);
+		$status = curl_getinfo($http2ch, CURLINFO_HTTP_CODE);
+		
+		if ($status == "200") {
+			$result["status"] = TRUE;
+		}
+		
+		if ($result["status"]) {
+			$result["data"] = ["ext_id" => end(explode(":", trim($output)))];
+		}
+		
+		return $result;
+	}
 
     private function tg($message, $status = "info")
     {

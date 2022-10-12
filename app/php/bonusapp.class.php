@@ -4645,11 +4645,17 @@ class BonusApp
     {
         $result     = ["status" => false, "data" => []];
         $lastNewsId = 0;
+        $addCatalog = "AND catalog IS NULL";
+        $addCatalog = "";
         
         if (array_key_exists("lastNews", $options)) {
             $lastNewsId = $options["lastNews"];
         }
         
+        if (array_key_exists("source", $options) && $options["source"] >= 234) {
+            $addCatalog = "";
+        }
+
         $cd = new DateTime();
         $query = $this->pdo->prepare("SELECT
                 id,
@@ -4657,13 +4663,15 @@ class BonusApp
                 date,
                 image,
                 title,
-                description
+                description,
+                catalog
             FROM
                 news
             WHERE
                 id > :lastNewsId
                 AND date_to_post <= :cd
                 AND is_active = 1
+                " . $addCatalog . "
             ORDER BY
                 date_to_post
             LIMIT :limit
@@ -4672,7 +4680,7 @@ class BonusApp
         $queryResult = $query->fetchAll();
         if (count($queryResult)) $result = [
             "status" => true,
-            "data" => $queryResult
+            "data"   => $queryResult
         ];
 
         return $result;

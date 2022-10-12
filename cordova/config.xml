@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.stolica.bonuses" version="5.4.1" android-versionCode="233" ios-CFBundleVersion="226" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.stolica.bonuses" version="5.4.1" android-versionCode="236" ios-CFBundleVersion="236" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Столица</name>
     <description>Алкомаркеты Столица - программа лояльности</description>
     <author email="d.grebenyuk30@gmail.com" href="https://bonus.stolica-dv.ru/">
@@ -61,6 +61,8 @@
     </platform>
 	
     <platform name="android">
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/screen/android/splash-land-320-200.png" />
+        <!-- 
         <splash src="res/screen/android/splash-port-200-320.png" density="hdpi"/>
         <splash src="res/screen/android/splash-port-320-480.png" density="ldpi"/>
         <splash src="res/screen/android/splash-port-480-800.png" density="mdpi"/>
@@ -80,6 +82,7 @@
         <splash src="res/screen/android/splash-port-720-1280.png" density="port-xhdpi" />
         <splash src="res/screen/android/splash-port-960-1600.png" density="port-xxhdpi" />
         <splash src="res/screen/android/splash-port-1280-1920.png" density="port-xxxhdpi" /> 
+        -->
     </platform>
 
     <platform name="ios">

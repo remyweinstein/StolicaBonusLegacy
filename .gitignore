@@ -4,6 +4,7 @@ app/php/const.php
 nbproject/*
 /app/php/const.original.php
 app/assets/news/*
+app/assets/catalog/*
 vendor/*
 app/php/const.php
 app/php/const.php.save

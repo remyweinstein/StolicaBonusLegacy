@@ -107,7 +107,7 @@ const C = function (s, p) {
         this.create = (tag) => {
             const el = d.createElement(tag);
             this.els = [el];
-            this.el = el;
+            this.el  = el;
 
             return this;
         },

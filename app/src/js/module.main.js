@@ -97,12 +97,12 @@ const sections = {
         prevSection: 'personal_update',
         needAuth: true
     },
-  notifications: {
-    title: 'Уведомления',
-    showMenu: true,
-    prevSection: 'personal',
-    needAuth: true,
-  },
+    notifications: {
+        title: 'Уведомления',
+        showMenu: true,
+        prevSection: 'personal',
+        needAuth: true,
+    },
 };
 
 let currentSection = '',
@@ -145,10 +145,10 @@ d.addEventListener('DOMContentLoaded', () => {
         }, (err) => {
             console.log(JSON.stringify(err));
         });
-        
+
         clientDevice = `${device.platform} ${device.version} (${device.manufacturer} ${device.model})`;
-        platform     = device.platform;
-        
+        platform = device.platform;
+
         cordova.getAppVersion.getVersionCode(function (version) {
             versionApp = version;
             clientInfo = `${device.platform} v${versionApp}`;
@@ -157,30 +157,30 @@ d.addEventListener('DOMContentLoaded', () => {
         show('#linkDeleteAccount');
         C('#plasticNumber').addclass('farAway');
         C('#set_card').addclass('farAway');
-        
+
         switch (device.platform) {
             case "Android":
                 let messaging = cordova.plugins.firebase.messaging;
-                
-                messaging.getToken().then(function(token) {
+
+                messaging.getToken().then(function (token) {
                     C().setStor(LS_PUSHID, token);
                 });
-                messaging.onMessage(function(payload) {
+                messaging.onMessage(function (payload) {
                     let gcm = payload.gcm;
                     showPopup(gcm.title, gcm.body);
                 });
-                messaging.onBackgroundMessage(function(payload) {
+                messaging.onBackgroundMessage(function (payload) {
                     //
                 });
                 break;
-            case "iOS":              
+            case "iOS":
                 let push = window['APNSPushNotification'].init({
-                        ios: {
-                            alert: "true",
-                            badge: "true",
-                            sound: "true"
-                        }
-                    });
+                    ios: {
+                        alert: "true",
+                        badge: "true",
+                        sound: "true"
+                    }
+                });
                 push.on('registration', (data) => {
                     const token = data.registrationId;
                     C().setStor(LS_PUSHID, token);
@@ -204,32 +204,32 @@ d.addEventListener('DOMContentLoaded', () => {
                     // e.message
                     //alert(e.message);
                 });
-                
+
                 break;
         }
-        
+
         C(d).bind('backbutton', function (e) {
             e.preventDefault();
-            
+
             if (!closeOpenOverlays()) {
                 showPopup("Выйти из Столица.Бонусы?",
-                        "",
-                        "",
-                        ["Да", "Нет"],
-                        exitApp);
+                    "",
+                    "",
+                    ["Да", "Нет"],
+                    exitApp);
             }
         });
     });
 
     crashClearStorage();
-    
+
     let updateStore = JSON.parse(C().getStor(LS_CURR_UPDATE));
     if (updateStore && updateStore.lastNews) {
         delete updateStore.lastNews;
         updateStore.newsHash = "";
         C().setStor(LS_CURR_UPDATE, JSON.stringify(updateStore));
     }
-    
+
     initPopups();
 
     bearerToken = C().getStor(LS_TOKEN);
@@ -241,7 +241,7 @@ d.addEventListener('DOMContentLoaded', () => {
         wallet: 1,
         purchases: 1
     }));
-    
+
     // Применим маску ко всем полям ввода номера телефона
     C('input[id*="-mask"]').els.forEach((inp) => {
         mask(inp);
@@ -266,9 +266,9 @@ d.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-    
+
     C("#set_card").bind("click", () => setCard());
-    
+
     C("#auth-button").bind("click", () => auth());
 
     C(".system_tabsHead > span label").els.forEach((label) => {
@@ -315,14 +315,14 @@ d.addEventListener('DOMContentLoaded', () => {
     });
 
     passViewToggle();
-    
+
     const checkBrowserForUpdater = setTimeout(() => {
         if (deviceType() !== "desktop" && !versionApp && C().getStor("NOW_DATE") != new Date().toLocaleDateString()) {
             C(".alertUpdater__desc_name a").el.href = `${DOMAIN}/application`;
             show(C("#alertUpdater").el);
         }
     }, 10000);
-    
+
     C('#reg-button').bind("click", () => {
         if (checkReg()) {
             showPopup(`Подтверждение звонком`, `Вам позвонят на номер\n${C('#reg-phone-mask').val()}`, `На звонок отвечать не требуется, введите последние четыре цифры номера телефона с которого совершён звонок`, `Запросить звонок`, reg);
@@ -405,26 +405,26 @@ d.addEventListener('DOMContentLoaded', () => {
 });
 
 let startSwipeX = 0;
-let stopSwipeX  = 0;
+let stopSwipeX = 0;
 let startSwipeY = 0;
-let stopSwipeY  = 0;
+let stopSwipeY = 0;
 
 function checkSwipeX() {
     const currentSection = C().getStor(LS_SECTION);
-    
+
     if (canSlidePages(currentSection)) {
         const diffX = stopSwipeX - startSwipeX;
         const diffY = Math.abs(stopSwipeY - startSwipeY);
 
         if (Math.abs(diffX) > 200 && diffY < 100) {
             let nextSection;
-            
+
             if (diffX > 0) {
                 nextSection = getPrevSection(currentSection);
             } else {
                 nextSection = getNextSection(currentSection);
             }
-            
+
             drawSection(nextSection);
         }
     }
@@ -437,22 +437,22 @@ function canSlidePages(currentSection) {
 function getNextSection(currentSection) {
     const i = carouselSections.indexOf(currentSection) + 1;
     let count = carouselSections.length;
-    
+
     if (count === i) {
         return carouselSections[0];
     }
-    
+
     return carouselSections[i];
 }
 
 function getPrevSection(currentSection) {
     const i = carouselSections.indexOf(currentSection) - 1;
     let count = carouselSections.length - 1;
-    
+
     if (i < 0) {
         return carouselSections[count];
     }
-    
+
     return carouselSections[i];
 }
 
@@ -463,23 +463,23 @@ function closeOpenOverlays() {
     };
     let rem = (id) => {
         const el = C(id).el;
-        
+
         if (el) {
             el.parentNode.removeChild(el);
             return true;
         }
-        
+
         return false;
     };
     let isFind = false;
-    
+
     for (let id of list) {
         switch (id) {
             case ".storeMap": {
                 isFind = rem(id);
                 break;
             }
-            
+
             case ".topNav__back": {
                 if (disp(id)) {
                     routePrevSection();
@@ -487,13 +487,13 @@ function closeOpenOverlays() {
                 }
                 break;
             }
-            
+
             case ".qrcodeOverlay": {
-                C(d).bind("deviceready", function() {
-                    cordova.plugins.brightness.setBrightness(currentBrightness, (suc) => {}, (err) => {});
+                C(d).bind("deviceready", function () {
+                    cordova.plugins.brightness.setBrightness(currentBrightness, (suc) => { }, (err) => { });
                 });
             }
-            
+
             default: {
                 if (disp(id)) {
                     if (id === "#popupOverlay") {
@@ -506,13 +506,13 @@ function closeOpenOverlays() {
                 break;
             }
         }
-        
+
         if (isFind) {
             C("body").delclass("hideOverflow");
             break;
         }
     }
-    
+
     return isFind;
 }
 
@@ -685,7 +685,7 @@ async function drawSection(section) {
         case "news": {
             break;
         }
-        
+
         case "set_plastic": {
             break;
         }
@@ -1158,11 +1158,11 @@ function attentionFocus(el) {
 
 function deleteAccount() {
     showPopup(
-      '',
-      '',
-      'Вы уверены, что хотите удалить свою учетную запись?<p><small>Если да, то все ваши привелегии исчезнут.</small></p>',
-      ['Да, уверен', 'Нет, отменить'],
-      apiDeleteAccount,
+        '',
+        '',
+        'Вы уверены, что хотите удалить свою учетную запись?<p><small>Если да, то все ваши привелегии исчезнут.</small></p>',
+        ['Да, уверен', 'Нет, отменить'],
+        apiDeleteAccount,
     );
 }
 
@@ -1170,12 +1170,12 @@ async function apiDeleteAccount() {
     const result = await api('deleteAccount');
 
     if (result.status) {
-      clearLocalStorage();
-      location.reload();
+        clearLocalStorage();
+        location.reload();
     }
 
     return result;
-  }
+}
 
 async function logOff() {
     showLoader();
@@ -1231,37 +1231,37 @@ function showRequestSms() {
 }
 
 function showTerms() {
-  loadRules(TERMS_URL);
+    loadRules(TERMS_URL);
 }
 
 function showRules() {
-  loadRules(RULES_URL);
+    loadRules(RULES_URL);
 }
 
 function showRefRules() {
-  loadRules(REF_RULES_URL);
+    loadRules(REF_RULES_URL);
 }
 
 async function loadRules(url) {
-  show('#terms');
-  C('body').addclass('hideOverflow');
-  const response = await fetch(url);
+    show('#terms');
+    C('body').addclass('hideOverflow');
+    const response = await fetch(url);
 
-  if (response.ok) {
-    const html = await response.text();
-    const regexp = /<body[^>]*>([\s\S]*?)<\/body>/;
-    const body = regexp.exec(html);
+    if (response.ok) {
+        const html = await response.text();
+        const regexp = /<body[^>]*>([\s\S]*?)<\/body>/;
+        const body = regexp.exec(html);
 
-    C('#terms .terms__content').el.innerHTML = body[1];
-  } else {
-    closeTerms();
-  }
+        C('#terms .terms__content').el.innerHTML = body[1];
+    } else {
+        closeTerms();
+    }
 }
 
 function closeTerms() {
-  C('#terms .terms__content').el.innerHTML = '';
-  hide('#terms');
-  C('body').delclass('hideOverflow');
+    C('#terms .terms__content').el.innerHTML = '';
+    hide('#terms');
+    C('body').delclass('hideOverflow');
 }
 
 function showIndicator() {
@@ -1338,110 +1338,94 @@ function onErrorCatch(error) {
 }
 
 function openFaq() {
-    temp = ` <h4><center>Частые вопросы</center></h4>
+    temp = `<h4><center>Частые вопросы</center></h4>
         <div class="close-positions"><i class="icon-cancel" onClick="closePositions()"></i></div>
         <ul class="faq">
-        <li onClick="this.classList.toggle('active')">
-        Как накопить бонусы?
-        <div>
-        <p>Бонусы начисляются при совершении покупок в магазинах, использующих товарный знак "Столица" по лицензионному договору, с использованием пластиковой или виртуальной карты программы лояльности. Начисление бонусов за покупки товаров, участвующих в программе лояльности, происходит исходя из стоимости товара, оплаченной рублями. На часть стоимости товара, оплаченную бонусами, вознаграждение не начисляется. Максимальный размер бонусов, который может быть начислен при покупке конкретного товара, указан на ценнике. Процент начисления бонусов составляет до 15% от стоимости товара.</p>
-       </div>
-       </li>
-                                                                                       <li onClick="this.classList.toggle('active')">Как потратить бонусы?
-                                                                                                   <div><p>Бонусами возможна частичная оплата товара. На каждом ценнике указано количество бонусов, которыми можно оплатить товар.<br>
-                                                                                                               Для списания и начисления бонусов, необходимо при совершении покупки на кассе предъявить кассиру QR код, расположенный на пластиковой либо виртуальной карте.</p></div>
-                                                                                                                       </li>
-                                                                                                                               <li onClick="this.classList.toggle('active')">
-                                                                                                                                           Какие бонусы бывают?
-                                                                                                                                                       <div>
-                                                                                                                                                                       <p>Бонусы бывают трех видов:</p>
-                                                                                                                                                                                       <ul>
-                                                                                                                                                                                                       <li>Приветственные - 2000 бонусов дарим при регистрации.</li>
-                                                                                                                                                                                                                       <li>Базовые бонусы – бонусы, начисленные за покупки.</li>
-                                                                                                                                                                                                                                       <li>Подарочные - бонусы на День рождения - начисляем за 7 дней до Дня рождения.</li>
-                                                                                                                                                                                                                                                       </ul>
-                                                                                                                                                                                                                                                                   </div>
-                                                                                                                                                                                                                                                                           </li>
-                                                                                                                                                                                                                                                                                   <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                               Сколько стоит один бонус?
-                                                                                                                                                                                                                                                                                                           <div><p>Стоимость одного бонуса равна одному рублю.</p></div>
-                                                                                                                                                                                                                                                                                                                   </li>
-                                                                                                                                                                                                                                                                                                                           <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                       Как пользоваться приложением?
-                                                                                                                                                                                                                                                                                                                                                   <div><p>Для использования приложения необходимо быть зарегистрированным участником бонусной программы.</p></div>
-                                                                                                                                                                                                                                                                                                                                                           </li>
-                                                                                                                                                                                                                                                                                                                                                                   <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                               Зачем мне приложение?
-                                                                                                                                                                                                                                                                                                                                                                                           <div><p>В приложении удобно отслеживать актуальный баланс бонусных баллов и акции, проводимые в магазинах "Столица".</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                   </li>
-                                                                                                                                                                                                                                                                                                                                                                                                           <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                       У меня пропали бонусы
-                                                                                                                                                                                                                                                                                                                                                                                                                                   <div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                   <p>Возможно, Ваши бонусы сгорели. У бонусов есть срок действия, а именно:</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Приветственные бонусы (2000 бонусов) - срок действия 90 дней с момента начисления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Базовые бонусы до 10% от суммы, оплаченной рублями - срок действия 90 дней с момента начисления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Бонусы в честь Дня рождения (1000 бонусов) - срок действия составляет семь дней до, в день Рождения, и семь дней после Дня рождения, после чего такие бонусы сгорают без права восстановления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <p>Если Вы считаете, что бонусы не должны были сгореть, проверьте детализацию операций в приложении.</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Как восстановить пароль?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <div><p>Для восстановления пароля, перейдите к форме восстановления пароля, введите Ваш номер телефона и нажмите кнопку "забыли пароль", после этого нажмите "получить код для входа".</p><p>На указанный Вами номер телефона поступит звонок, после чего в поле для ввода нужно ввести 4 последние цифры номера телефона входящего звонка. Если звонок не поступает, у Вас есть возможность запросить смс в форме восстановления пароля. В смс Вам придет четырехзначный код - его необходимо ввести в поле для ввода.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Какой срок действия у бонусов?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li>Приветственные 2000 бонусов - срок действия 90 дней с момента начисления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li>Базовые бонусы до 10% от суммы, оплаченной рублями* - срок действия 90 дней с момента начисления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li>Бонусы в честь Дня рождения (1000 бонусов) - срок действия составляет семь дней до, в день Рождения, и семь дней после Дня рождения, после чего такие бонусы сгорают без права восстановления.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Можно ли оплатить 100% покупки бонусами?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <div><p>Бонусами возможна только частичная оплата товара. На ценнике указано количество бонусов, которыми можно оплатить товар, исходя из того, что один бонус равен одному рублю.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Как изменить номер телефона, указанный в личном кабинете программы лояльности?	
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <div><p>Необходимо обратиться на горячую линию, озвучить новый номер, после чего оператор изменит номер телефона в программе лояльности.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       При восстановлении пароля мне не поступает звонок/смс, что делать?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <div><p>Обратитесь на горячую линию, либо напишите запрос в форму обратной связи в личном кабинете Приложения программы лояльности.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Как поменять адрес e-mail, указанный в личном кабинете программы лояльности?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <div><p>Обратитесь на горячую линию, либо напишите в форму обратной связи в личном кабинете Приложения программы лояльности данные, которые необходимо поменять.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Почему бонусы не списываются/не начисляются?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <p>Возможно, Вы приобретаете товары, не участвующие в бонусной программе. К таким товарам относятся:</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Табак, табачная и никотинсодержащая продукция, устройства для потребления никотинсодержащей продукции, кальяны.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Товар, которые реализуется по установленной Правительством РФ минимальной розничной цене (при покупке такого товара не списываются бонусы).</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Гигиенические маски.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Пакеты-майки.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Бутылки ПЭТ, банки стеклянные.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <li>Любой товар, на ценнике к которому не указан процент списания и начисления бонусов.</li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   </ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Как изменить дату рождения, указанную в личном кабинете программы лояльности?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <div><p>Вам необходимо обратиться на горячую линию по номеру 8-800-6000-401, либо написать запрос в форму обратной связи программы лояльности.</p></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <li onClick="this.classList.toggle('active')">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Что означает цвет ценника?	
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <div><ul><li>Белый ценник – возможна оплата товара бонусами от 5% до 30% стоимости товара, и начисление кэшбека до 10% бонусами.</li><li>Желтый ценник – возможна оплата товара бонусами до 50% стоимости товара, и начисление кэшбека до 10% бонусами.</li><li>Зеленый ценник – цена товара на таком ценнике указана с учетом всех скидок, поэтому скидка по бонусной карте не предоставляется, но при покупке такого товара начисляется кэшбек до 10% бонусами.</li></ul></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </li>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </ul>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <center><button onClick="closePositions()">Закрыть</button></center>
-   `;
-   
-   fillOverlay(temp);
+            <li onClick="this.classList.toggle('active')">
+                Как накопить бонусы?
+                <div>
+                    <p>Бонусы начисляются при совершении покупок в магазинах, использующих товарный знак "Столица" по лицензионному договору, с использованием пластиковой или виртуальной карты программы лояльности. Начисление бонусов за покупки товаров, участвующих в программе лояльности, происходит исходя из стоимости товара, оплаченной рублями. На часть стоимости товара, оплаченную бонусами, вознаграждение не начисляется. Максимальный размер бонусов, который может быть начислен при покупке конкретного товара, указан на ценнике. Процент начисления бонусов составляет до 15% от стоимости товара.</p>
+                </div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как потратить бонусы?
+                <div><p>Бонусами возможна частичная оплата товара. На каждом ценнике указано количество бонусов, которыми можно оплатить товар.<br>
+                        Для списания и начисления бонусов, необходимо при совершении покупки на кассе предъявить кассиру QR код, расположенный на пластиковой либо виртуальной карте.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Какие бонусы бывают?
+                <div>
+                   <p>Бонусы бывают трех видов:</p>
+                    <ul>
+                        <li>Приветственные - 2000 бонусов дарим при регистрации.</li>
+                        <li>Базовые бонусы – бонусы, начисленные за покупки.</li>
+                        <li>Подарочные - бонусы на День рождения - начисляем за 7 дней до Дня рождения.</li>
+                    </ul>
+                </div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Сколько стоит один бонус?
+                <div><p>Стоимость одного бонуса равна одному рублю.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как пользоваться приложением?
+                <div><p>Для использования приложения необходимо быть зарегистрированным участником бонусной программы.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Зачем мне приложение?
+                <div><p>В приложении удобно отслеживать актуальный баланс бонусных баллов и акции, проводимые в магазинах "Столица".</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">У меня пропали бонусы
+                <div><p>Возможно, Ваши бонусы сгорели. У бонусов есть срок действия, а именно:</p>
+                    <ul>
+                        <li>Приветственные бонусы (2000 бонусов) - срок действия 90 дней с момента начисления.</li>
+                        <li>Базовые бонусы до 10% от суммы, оплаченной рублями - срок действия 90 дней с момента начисления.</li>
+                        <li>Бонусы в честь Дня рождения (1000 бонусов) - срок действия составляет семь дней до, в день Рождения, и семь дней после Дня рождения, после чего такие бонусы сгорают без права восстановления.</li>
+                    </ul>
+                    <p>Если Вы считаете, что бонусы не должны были сгореть, проверьте детализацию операций в приложении.</p>
+                </div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как восстановить пароль?
+                <div><p>Для восстановления пароля, перейдите к форме восстановления пароля, введите Ваш номер телефона и нажмите кнопку "забыли пароль", после этого нажмите "получить код для входа".</p><p>На указанный Вами номер телефона поступит звонок, после чего в поле для ввода нужно ввести 4 последние цифры номера телефона входящего звонка. Если звонок не поступает, у Вас есть возможность запросить смс в форме восстановления пароля. В смс Вам придет четырехзначный код - его необходимо ввести в поле для ввода.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Какой срок действия у бонусов?
+                <div>
+                    <ul>
+                        <li>Приветственные 2000 бонусов - срок действия 90 дней с момента начисления.</li>
+                        <li>Базовые бонусы до 10% от суммы, оплаченной рублями* - срок действия 90 дней с момента начисления.</li>
+                        <li>Бонусы в честь Дня рождения (1000 бонусов) - срок действия составляет семь дней до, в день Рождения, и семь дней после Дня рождения, после чего такие бонусы сгорают без права восстановления.</li>
+                    </ul>
+                </div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Можно ли оплатить 100% покупки бонусами?
+                <div><p>Бонусами возможна только частичная оплата товара. На ценнике указано количество бонусов, которыми можно оплатить товар, исходя из того, что один бонус равен одному рублю.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как изменить номер телефона, указанный в личном кабинете программы лояльности?	
+                <div><p>Необходимо обратиться на горячую линию, озвучить новый номер, после чего оператор изменит номер телефона в программе лояльности.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">При восстановлении пароля мне не поступает звонок/смс, что делать?
+                <div><p>Обратитесь на горячую линию, либо напишите запрос в форму обратной связи в личном кабинете Приложения программы лояльности.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как поменять адрес e-mail, указанный в личном кабинете программы лояльности?
+                <div><p>Обратитесь на горячую линию, либо напишите в форму обратной связи в личном кабинете Приложения программы лояльности данные, которые необходимо поменять.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Почему бонусы не списываются/не начисляются?
+                <div><p>Возможно, Вы приобретаете товары, не участвующие в бонусной программе. К таким товарам относятся:</p>
+                     <ul>
+                        <li>Табак, табачная и никотинсодержащая продукция, устройства для потребления никотинсодержащей продукции, кальяны.</li>
+                        <li>Товар, которые реализуется по установленной Правительством РФ минимальной розничной цене (при покупке такого товара не списываются бонусы).</li>
+                        <li>Гигиенические маски.</li>
+                        <li>Пакеты-майки.</li>
+                        <li>Бутылки ПЭТ, банки стеклянные.</li>
+                        <li>Любой товар, на ценнике к которому не указан процент списания и начисления бонусов.</li>
+                    </ul>
+                </div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Как изменить дату рождения, указанную в личном кабинете программы лояльности?
+                <div><p>Вам необходимо обратиться на горячую линию по номеру 8-800-6000-401, либо написать запрос в форму обратной связи программы лояльности.</p></div>
+            </li>
+            <li onClick="this.classList.toggle('active')">Что означает цвет ценника?	
+                <div><ul><li>Белый ценник – возможна оплата товара бонусами от 5% до 30% стоимости товара, и начисление кэшбека до 10% бонусами.</li><li>Желтый ценник – возможна оплата товара бонусами до 50% стоимости товара, и начисление кэшбека до 10% бонусами.</li><li>Зеленый ценник – цена товара на таком ценнике указана с учетом всех скидок, поэтому скидка по бонусной карте не предоставляется, но при покупке такого товара начисляется кэшбек до 10% бонусами.</li></ul></div>
+            </li>
+        </ul>
+        <center><button onClick="closePositions()">Закрыть</button></center>`;
+
+    fillOverlay(temp);
 }
 
 
@@ -1462,19 +1446,19 @@ async function checkUpdates(callback) {
 
     const result = await getUpdates();
     const { data, status } = result;
-
+    
     if (viewNewApp && versionApp && platform) {
         fetch(`${VERSION_URL}?platform=${platform}`).then(r => r.text()).then(t => {
             if (Number(t) > Number(versionApp)) {
                 showPopup("Внимание", "Вышла новая версия, пожалуйста, обновите приложение!", "", ["Обновить", "link:Напомнить позже"], linkToApp);
             }
-            
+
             viewNewApp = null;
         });
     }
-    
+
     const curSection = C().getStor(LS_SECTION),
-          updates = !isEmpty(C().getStor(LS_CURR_UPDATE)) ? JSON.parse(C().getStor(LS_CURR_UPDATE)) : tempUpdate;
+          updates    = !isEmpty(C().getStor(LS_CURR_UPDATE)) ? JSON.parse(C().getStor(LS_CURR_UPDATE)) : tempUpdate;
     let contents = !isEmpty(C().getStor(LS_CONTENTS)) ? JSON.parse(C().getStor(LS_CONTENTS)) : { "personal": "", "wallet": "" };
 
     if (status) {
@@ -1482,21 +1466,21 @@ async function checkUpdates(callback) {
             updates.newsHash = data.newsHash;
             drawNews(data.news);
         }
-        
+
         if (data.serverVersion) {
             C().setStor("versions", JSON.stringify(data.serverVersion));
         }
-        
+
         if (data.storesHash) {
             updates.storesHash = data.storesHash;
             drawStores(data.stores);
         }
-        
+
         if (data.notifyHash) {
             updates.notifyHash = data.notifyHash;
             drawNotifications(data.notifications);
         }
-        
+
         if (data.personalHash) {
             setNeedUpdate(contents, result, 'personal');
             contents.personal = data.personal;
@@ -1505,13 +1489,13 @@ async function checkUpdates(callback) {
             let userName = `${data.personal.firstname} ${data.personal.middlename}`;
             C("#feedback-name").val((userName ? userName : ""));
         }
-        
+
         if (data.walletHash) {
             setNeedUpdate(contents, result, 'wallet');
             contents.wallet = data.wallet;
             updates.walletHash = data.walletHash;
         }
-        
+
         if (data.lastPurchase) {
             updates.lastPurchase = data.lastPurchase;
             drawPurchases(data.purchases, data.transactions);
@@ -1531,7 +1515,7 @@ async function checkUpdates(callback) {
 
         C().setStor(LS_CURR_UPDATE, JSON.stringify(updates));
         C().setStor(LS_CONTENTS, JSON.stringify(contents));
-        
+
         renderSections();
     } else {
         // Не авторизованных отправляем на авторизацию
@@ -1557,7 +1541,7 @@ async function getUpdates() {
     if (contents.personal === "") {
         data = tempUpdate;
     }
-    
+
     if (initApp) {
         data.newsHash = "";
         data.storesHash = "";
@@ -1566,25 +1550,25 @@ async function getUpdates() {
         data.lastTransaction = "";
         initApp = false;
     }
-    
+
     data.pushId = C().getStor(LS_PUSHID);
-    
+
     if (clientDevice) {
         data.clientDevice = clientDevice;
     }
-    
+
     return await api("getUpdates", data);
 }
 
 function drawNotifications(notifiesList) {
-    
+
     if (!notifiesList) {
         return false;
     }
 
     const container = C(".notifications");
     container.html("");
-    
+
     notifiesList.forEach((notify) => {
         const clas = notify.is_unread ? " class = 'unread'" : "";
         const title = notify.title ? `${notify.title}<br>` : "";
@@ -1607,12 +1591,12 @@ function drawNotifications(notifiesList) {
 }
 
 async function clickNotify(id) {
-        C(`[data-id="${id}"]`).delclass("unread");
-        
-        await api("readNotificaton", {
-            id
-        });
-        checkUnreadNotify();
+    C(`[data-id="${id}"]`).delclass("unread");
+
+    await api("readNotificaton", {
+        id
+    });
+    checkUnreadNotify();
 }
 
 function checkUnreadNotify() {
@@ -1621,7 +1605,7 @@ function checkUnreadNotify() {
 
     containers.forEach((li) => {
         if (li.classList.contains("unread")) {
-            yep =  true;
+            yep = true;
         }
     });
 

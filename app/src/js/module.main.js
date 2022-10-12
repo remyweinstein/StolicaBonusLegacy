@@ -174,37 +174,19 @@ d.addEventListener('DOMContentLoaded', () => {
                 });
                 break;
             case "iOS":
-                let push = window['APNSPushNotification'].init({
-                    ios: {
-                        alert: "true",
-                        badge: "true",
-                        sound: "true"
-                    }
+                cordova.plugins.firebase.messaging.requestPermission({forceShow: false}).then(function() {
+                    //console.log("Push messaging is allowed");
                 });
-                push.on('registration', (data) => {
-                    const token = data.registrationId;
+                cordova.plugins.firebase.messaging.getToken().then(function (token) {
                     C().setStor(LS_PUSHID, token);
-                    //alert(token);
-                    this.sendRegDetails(token);
                 });
-                push.on('other', (data) => {
-                    //alert(data);
+                cordova.plugins.firebase.messaging.onMessage(function (payload) {
+                    let gcm = payload.gcm;
+                    showPopup(gcm.title, gcm.body);
                 });
-                push.on('notification', (data) => {
-                    //alert(data);
-                    //showPopup(data.title, data.message);
-                    window['cordova'].plugins.notification.local.schedule({
-                        title: data.title,
-                        text: data.message,
-                        sound: data.sound,
-                        at: new Date().getTime()
-                    });
+                cordova.plugins.firebase.messaging.onBackgroundMessage(function (payload) {
+                    //
                 });
-                push.on('error', (e) => {
-                    // e.message
-                    //alert(e.message);
-                });
-
                 break;
         }
 

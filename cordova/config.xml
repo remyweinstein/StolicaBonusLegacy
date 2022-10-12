@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.stolica.bonuses" version="5.5.1" android-versionCode="237" ios-CFBundleVersion="237" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.stolica.bonuses" version="5.5.2" android-versionCode="238" ios-CFBundleVersion="238" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Столица</name>
     <description>Алкомаркеты Столица - программа лояльности</description>
     <author email="d.grebenyuk30@gmail.com" href="https://bonus.stolica-dv.ru/">

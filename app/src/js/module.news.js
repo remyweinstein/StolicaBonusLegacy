@@ -72,7 +72,7 @@ function drawNews(newsList) {
             if (news.catalog) {
                 let code = getCodeByCity(city);
                 for (let i = catalog.a; i > 1; i--) {
-                    C(".newsOverlay__image").el.after(C().strToNode(`<img class="newsOverlay__image newsCatalogImage" src="/app/assets/catalog/${catalog.dir}/${code}/${i}.jpg" alt="">`).el)
+                    C(".newsOverlay__image").el.after(C().strToNode(`<img class="newsOverlay__image newsCatalogImage" src="${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/${i}.jpg" alt="">`).el)
                 }
 
                 imageSrc = `${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/1.jpg`

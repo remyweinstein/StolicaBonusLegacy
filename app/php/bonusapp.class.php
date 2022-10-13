@@ -4646,13 +4646,12 @@ class BonusApp
         $result     = ["status" => false, "data" => []];
         $lastNewsId = 0;
         $addCatalog = "AND catalog IS NULL";
-        $addCatalog = "";
         
         if (array_key_exists("lastNews", $options)) {
             $lastNewsId = $options["lastNews"];
         }
         
-        if (array_key_exists("source", $options) && $options["source"] >= 234) {
+        if (array_key_exists("source", $options) && $options["source"] >= 237) {
             $addCatalog = "";
         }
 

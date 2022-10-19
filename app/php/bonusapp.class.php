@@ -2129,6 +2129,8 @@ class BonusApp
         ];
         */
 
+        $this->setLastActivityAccount($phone);
+
         $result = [
             "status" => true,
             "data" => [
@@ -2253,6 +2255,13 @@ class BonusApp
         }
 
         return $result;
+    }
+
+    private function setLastActivityAccount($phone) {
+        $query = $this->pdo->prepare("UPDATE accounts SET last_activity = NOW() WHERE phone = :phone");
+        $query->execute(["phone" => $phone]);
+
+        return true;
     }
 
     private function getCities()

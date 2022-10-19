@@ -170,7 +170,8 @@ d.addEventListener('DOMContentLoaded', () => {
                     showPopup(gcm.title, gcm.body);
                 });
                 messaging.onBackgroundMessage(function (payload) {
-                    //
+                    let gcm = payload.gcm;
+                    showPopup(gcm.title, gcm.body);
                 });
                 break;
             case "iOS":

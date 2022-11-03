@@ -77,6 +77,7 @@ function drawNews(newsList) {
 
                 imageSrc = `${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/1.jpg`
                 imgElem  = `<img src="${imageSrc}">`;
+                show(".newsOverlay .icon-cancel");
             }
     
             C("h4", el).text(news.title);
@@ -89,11 +90,13 @@ function drawNews(newsList) {
 }
 
 C(".newsOverlay").bind("click", (e) => {
-    if (e.target === e.currentTarget || e.target.type === "submit") {
+    if (e.target === e.currentTarget || e.target.type === "submit" || e.target.classList.contains("icon-cancel")) {
         C(".newsCatalogImage").els.forEach((el) => {
             el.parentNode.removeChild(el);
         });
+        C(".newsOverlay").el.scrollTop = 0;
         hide(".newsOverlay");
+        hide(".newsOverlay .icon-cancel");
         d.body.classList.remove("hideOverflow");
     }
 });

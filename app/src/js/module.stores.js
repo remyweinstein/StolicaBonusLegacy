@@ -98,7 +98,7 @@ function getStoreToGeoMap(coordinates, city, title, shedule, phone, rsa_id) {
     
     const storeMap = C().strToNode(temp);
     
-    C("div>div", storeMap).bind("click", () => closeStore());
+    //C("div>div", storeMap).bind("click", () => closeStore());
     C("i", storeMap).bind("click", () => closeStore());
     d.body.appendChild(storeMap.el);
 
@@ -108,6 +108,8 @@ function getStoreToGeoMap(coordinates, city, title, shedule, phone, rsa_id) {
     const myMap = new ymaps.Map("map", {
         center: [x, y],
         zoom: 16
+    }, {
+        suppressMapOpenBlock: true
     });
 
     let objectManager = new ymaps.ObjectManager({

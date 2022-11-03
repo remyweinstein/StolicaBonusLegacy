@@ -44,6 +44,15 @@
     z-index: 4;
     margin-top: env(safe-area-inset-top,0);
     overflow: auto;
+
+    .icon-cancel {
+        position: fixed;
+        top: -0.25em;
+        right: 0;
+        color: #fff;
+        font-size: 3em;
+        z-index: 1;
+    }
     
     .newsOverlay__cont {
         border-radius: 1rem;

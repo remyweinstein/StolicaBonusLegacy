@@ -100,7 +100,7 @@ const sections = {
     notifications: {
         title: 'Уведомления',
         showMenu: true,
-        prevSection: 'personal',
+        prevSection: 'wallet',
         needAuth: true,
     },
 };

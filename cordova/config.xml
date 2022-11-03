@@ -8,6 +8,7 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
     
     <platform name="android">
         <resource-file src="res/values/colors.xml" target="app/src/main/res/values/colors.xml"/>

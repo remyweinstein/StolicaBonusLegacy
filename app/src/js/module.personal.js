@@ -161,28 +161,41 @@ async function changeCard() {
 
 async function changeProfileData() {
     const inpPass = "#personal-new-pass";
-        
-    C("#personal_changePassword_button").el.disabled = true;
+    const newPass = C(inpPass).val();
+    const newConfPass = C(`${inpPass}-confirmation`).val();
+    const subBut = C("#personal_changePassword_button").el;
 
-    if (C(inpPass).val().length > 0 && C(inpPass).val() === C(inpPass+"-confirmation").val()) {
-        await api("changePassword", {
-                        new_password: C("#personal-new-pass").val()
-                    });
+    if (newPass.length > 5 && newPass === newConfPass) {
+        subBut.disabled = true;
+
+        const passRes = await api("changePassword", {
+                            new_password: newPass
+                        });
+
+        if (passRes.status) {
+            showPopup("", passRes.description);
+            //showToast("Данные профиля изменены");
+        } else {
+            showPopup("Внимание", passRes.description);
+            //showToast(cardRes.description);
+        }
+
+        C(inpPass).val("");
+        C(`${inpPass}-confirmation`).val("");
+        subBut.disabled = false;
+    } else {
+        if (newPass.length < 6) {
+            showPopup("", "Пароль должен содержать не менее 6 символов.");
+        } else if (newPass !== newConfPass) {
+            showPopup("", "Пароли не совпадают.");
+        }
     }
     
+    /*
     let cardRes = await api("changeCardType", {
                             discount: C('input[name="systemChange"]:checked').val()
                         });
-    
-    if (cardRes.status) {
-        showPopup("", "Данные профиля изменены!");
-        //showToast("Данные профиля изменены");
-    } else {
-        showPopup("Внимание", cardRes.description);
-        //showToast(cardRes.description);
-    }
-    
-    C("#personal_changePassword_button").el.disabled = false;
+    */
 }
 
 async function setCard() {

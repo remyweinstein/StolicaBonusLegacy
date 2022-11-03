@@ -483,6 +483,16 @@ function closeOpenOverlays() {
                         rem("#cancelText");
                     }
 
+                    if (id === ".newsOverlay") {
+                        C(".newsCatalogImage").els.forEach((el) => {
+                            el.parentNode.removeChild(el);
+                        });
+                        C(".newsOverlay").el.scrollTop = 0;
+                        hide(".newsOverlay");
+                        hide(".newsOverlay .icon-cancel");
+                        d.body.classList.remove("hideOverflow");
+                    }
+
                     hide(id);
                     isFind = true;
                 }

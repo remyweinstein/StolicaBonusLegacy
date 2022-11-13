@@ -729,7 +729,7 @@ class BonusApp
                     }
 
                 case "getStores": {
-                        $resultData = $this->getStores();
+                        $resultData = $this->API_getStores();
                         break;
                     }
 
@@ -752,15 +752,18 @@ class BonusApp
 
                 case "showPopupDrawing": {
                         $resultData = $this->showPopupDrawing();
-
                         break;
                     }
 
                 case "getCities": {
                         $resultData = $this->getCities();
-
                         break;
                     }
+
+                case "getStores": {
+                    $resultData = $this->getStoresFullData();
+                    break;
+                }
 
                 case "getNews": { // устаревший метод
                         $resultData = $this->API_getNews(
@@ -1086,6 +1089,7 @@ class BonusApp
             $result["data"]["cardNumber"]           = $cardNumber;
             $result["data"]["discount"]             = $discount;
             $result["data"]["discountValue"]        = $discountValue;
+            $result["data"]["lifeTimes"]            = json_decode($operationResult["data"]["life_times"], true);
             $result["data"]["preferredDiscount"]    = $preferredDiscount;
             $result["data"]["balance"]              = $cardBalance / 100;
         } else {
@@ -2611,6 +2615,7 @@ class BonusApp
                 T2.sex,
                 T2.firstname,
                 T2.middlename,
+                b.life_times,
                 T2.lastname,
                 T2.birthdate,
                 T2.email,
@@ -3559,7 +3564,10 @@ class BonusApp
             ];
 
             usort($result["data"], function ($a, $b) {
-                return $a["date"] > $b["date"];
+                if ($a["date"] == $b["date"]) {
+                    return 0;
+                }
+                return ($a["date"] > $b["date"]) ? 1 : -1;
             });
         }
 
@@ -3857,7 +3865,10 @@ class BonusApp
                 }
 
                 usort($result["data"], function ($a, $b) {
-                    return $a["operation_date"] > $b["operation_date"];
+                    if ($a["operation_date"] == $b["operation_date"]) {
+                        return 0;
+                    }
+                    return ($a["operation_date"] > $b["operation_date"]) ? 1 : -1;
                 });
 
                 $result["status"] = true;
@@ -4117,6 +4128,63 @@ class BonusApp
             $result = [
                 "status" => true,
                 "data" => $queryResult,
+            ];
+        }
+
+        return $result;
+    }
+
+    private function API_getStores()
+    {
+        $result = ["status" => false];
+
+        $query = $this->pdo->prepare("SELECT
+                c.id,
+                c.title,
+                s.city_id,
+                s.rsa_id,
+                s.title AS store_title,
+                s.description,
+                s.shedule,
+                s.phone,
+                s.coordinates
+            FROM
+                cities c
+            LEFT JOIN stores s ON
+                c.id = s.city_id
+            WHERE
+                s.status = 1
+            ORDER BY
+                c.title
+        ");
+        $query->execute();
+        $queryResult = $query->fetchAll();
+
+        if (count($queryResult)) {
+            $cities = [];
+            foreach ($this->array_unique_key($queryResult, 'id') as $cityItem) {
+                $cities[] = [
+                    'id'    => $cityItem['id'],
+                    'title' => $cityItem['title']
+                ];
+            }
+
+            $stores = [];
+            foreach ($queryResult as $storesItem) {
+                $stores[] = [
+                    'city_id'       => $storesItem['city_id'],
+                    'title'         => $storesItem['store_title'],
+                    'rsa_id'        => $storesItem['rsa_id'],
+                    'description'   => $storesItem['description'],
+                    'shedule'       => $storesItem['shedule'],
+                    'phone'         => $storesItem['phone'],
+                    'coordinates'   => $storesItem['coordinates']
+                ];
+            }
+
+            $result = [
+                "status" => true,
+                "data" => ["cities" => $cities, "stores" => $stores]
             ];
         }
 
@@ -4656,6 +4724,10 @@ class BonusApp
         $lastNewsId = 0;
         $addCatalog = "AND catalog IS NULL";
         $addCatalog = "";
+
+        if ($limit == "") {
+            $limit = 50;
+        }
         
         if (array_key_exists("lastNews", $options)) {
             $lastNewsId = $options["lastNews"];
@@ -4669,7 +4741,7 @@ class BonusApp
         $query = $this->pdo->prepare("SELECT
                 id,
                 date_to_post,
-                date,
+                `date`,
                 image,
                 title,
                 description,

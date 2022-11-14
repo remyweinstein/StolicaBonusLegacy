@@ -644,7 +644,9 @@ class BonusApp
 
                 case "getWalletData": {
                         $resultData = $this->checkAuthorization($requestData["method"]);
-                        if ($resultData["status"]) $resultData = $this->API_getWalletData($resultData["data"]["token"], $requestData["data"]["last_id"], $requestData["data"]["only_balance"]);
+                        $last_id = array_key_exists("last_id", $requestData["data"]) ? $requestData["data"]["last_id"] : null;
+                        $only_balance = array_key_exists("only_balance", $requestData["data"]) ? $requestData["data"]["only_balance"] : null;
+                        if ($resultData["status"]) $resultData = $this->API_getWalletData($resultData["data"]["token"], $last_id, $only_balance);
 
                         break;
                     }

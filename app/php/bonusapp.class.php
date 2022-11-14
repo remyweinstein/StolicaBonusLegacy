@@ -1086,6 +1086,9 @@ class BonusApp
                     if ($getFullPurchasesDataByDateResult["status"]) $result["data"]["purchases"] = $getFullPurchasesDataByDateResult["data"];
                 }
             }
+            $result["data"]["transactions"] = [];
+            $getTransactionsResult = $this->getTransactions($personId);
+            if ($getTransactionsResult["status"]) $result["data"]["transactions"] = $getTransactionsResult["data"];
 
             $result["status"] = true;
             $result["data"]["cardNumber"]           = $cardNumber;

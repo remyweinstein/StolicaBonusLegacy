@@ -584,6 +584,10 @@ function dataURItoBlob(dataURI) {
   return blob;
 }
 
+if (C().getStor("new push")) {
+    showPopup("", C().getStor("new push"));
+}
+
 if (versionApp) {
     d.addEventListener("deviceready", function() {    
       let storageLocation = "";

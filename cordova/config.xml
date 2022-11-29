@@ -7,12 +7,13 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <access origin="mailto:*" launch-external="true" />
-    <access origin="tel:*" launch-external="true" />
+    <access origin="mailto:*" launch-external="yes" />
+    <access origin="tel:*" launch-external="yes" />
 
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-    
+    <allow-intent href="tel:*" />
+
     <platform name="android">
         <resource-file src="res/values/colors.xml" target="app/src/main/res/values/colors.xml"/>
         <preference name="AndroidXEnabled" value="true" />
@@ -31,7 +32,6 @@
     </platform>
     <platform name="ios">
         <allow-navigation href="tel:*" />
-        <allow-intent href="tel:*" />
         <!-- iOS 8.0+ -->
         <!-- iPhone 6 Plus  -->
         <icon src="icons/180x180.png" width="180" height="180" />

@@ -638,6 +638,76 @@ class LMX {
         return $result;
     }
 
+    public function chargeOns($cardNumbers, $amount, $extId, $description = "bonus.stolica-dv.ru", $deposit = true) {
+        $result = $this->initSAPIToken();
+        if ($result["status"]) {
+            $type = ($deposit ? "Deposit" : "Withdraw");
+            foreach ($cardNumbers as $el) {
+                $str .= '{
+                    "Identifier": "' . $el . '",
+                    "identifierType": "cardNumber",
+                    "amount": ' . $amount . ',
+                    "description": "",
+                    "externalInfo": ""
+                },';
+            }
+            echo($str);
+
+            $rawData = '{
+                "operations": [
+                    ' . $str . '
+                ],
+                "lifeTimeDefinition": {
+                    "id": ' . $extId . '
+                },
+                "legal": {
+                    "id": 12,
+                    "partnerId": 1
+                },
+                "currency": {
+                    "id": 1,
+                    "name": "Бонусы (9885300862.10)"
+                },
+                "loyaltyProgram": {
+                    "externalId": "D28308F6-B7F2-4851-8AAD-245A2BD4FFB9",
+                    "description": null,
+                    "paymentSystemId": 1,
+                    "images": null,
+                    "id": 1,
+                    "name": "Default"
+                },
+                "partner": {
+                    "id": 1,
+                    "externalId": "d43db70f-dfb5-7158-df0d-f28ac938f3a4",
+                    "name": "Столица",
+                    "canEdit": true,
+                    "loyaltyPrograms": [
+                        {
+                            "id": 1,
+                            "name": "Default"
+                        }
+                    ],
+                    "legalName": null
+                },
+                "targetGroup": null,
+                "type": "' . $type . '",
+                "description": "'.$description.'",
+                "internalDescription": "'.$description.'"
+            }';
+
+            $result = $this->SAPI_Deposit($rawData);
+            if ($result["status"] && $result["data"]->result->state == "Success") {
+                $result["data"] = $result["data"]->data;
+            } else {
+                $result["status"] = false;
+            }
+        } else {
+            $result["description"] = "Не удалось получить токен.";
+        }
+
+        return $result;
+    }
+
     public function chargeOn($cardNumber, $amount, $extId, $description = "bonus.stolica-dv.ru", $deposit = true) {
         $result = $this->initSAPIToken();
         if ($result["status"]) {

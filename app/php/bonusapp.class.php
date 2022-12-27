@@ -93,6 +93,11 @@ class BonusApp
                     break;
                 }
 
+            case "add-newyear": {
+                    print_r($this->runNewYearDeposits(["04669800977561"]));
+                    break;
+                }
+
             case "add-mailing": {
                     $result = $this->initPDO();
 
@@ -1535,6 +1540,12 @@ class BonusApp
             $this->journal("CRON", __FUNCTION__, round(microtime(true) - $start, 2), true);
             echo round(microtime(true) - $start, 2);
         }
+    }
+
+    public function runNewYearDeposits ($card_numbers)
+    {
+        $chargeOnResult = $LMX->chargeOns($card_numbers, 5000, 22, "Новый год");
+        return $chargeOnResult;
     }
 
     public function executeProlongations($limit)

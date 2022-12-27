@@ -135,6 +135,84 @@ const deviceType = () => {
     return 'desktop';
 };
 
+const getCodeByCity = (city) => {
+    let code = "d";
+
+    if (city=="Хабаровск") {
+        code = "a";
+    }
+    if (city=="Николаевск на Амуре") {
+        code = "b";
+    }
+    if (city=="Зея" || city=="Новый Ургал" || city=="Тында" || city=="Чегдомын") {
+        code = "c";
+    }
+
+    return code;
+}
+
+const openNews = (id) => {
+    const listNews = JSON.parse(C().getStor("LS_News"));
+    let news;
+    let imageSrc;
+    let imgElem;
+    let date;
+    let catalog;
+    let content;
+    let city = null;
+
+    listNews.forEach(newsly => {
+        if (newsly.id == id) {
+            news = newsly;
+            imageSrc = `${DOMAIN}/${news.image}`;
+            date   = news.date_to_post.split("-").reverse().join(".");
+
+            if (news.catalog) {
+                catalog = JSON.parse(news.catalog);
+    
+                if (!city) {
+                    content = JSON.parse(C().getStor(LS_CONTENTS));
+                    city    = content ? content.personal.city : null;
+                    //if (!city) return;
+                }
+    
+                code = getCodeByCity(city);
+    
+                catalog = JSON.parse(news.catalog);
+                imageSrc = `${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/1.jpg`
+                imgElem  = `<img src="${imageSrc}">`;
+            }
+        }
+    });
+
+    if (!news) {
+        return;
+    }
+
+    const el = C(".newsOverlay");
+
+    show(".newsOverlay");
+    
+    C("img", el).el.src = imageSrc;
+
+    if (news.catalog) {
+        let code = getCodeByCity(city);
+        for (let i = catalog.a; i > 1; i--) {
+            C(".newsOverlay__image").el.after(C().strToNode(`<img class="newsOverlay__image newsCatalogImage" src="${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/${i}.jpg" alt="">`).el)
+        }
+
+        imageSrc = `${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/1.jpg`
+        imgElem  = `<img src="${imageSrc}">`;
+        show(".newsOverlay .icon-cancel");
+    }
+
+    C("h4", el).text(news.title);
+    C("p", el).text(date);
+    C("p", el).els[1].innerHTML = news.description;
+
+    d.body.classList.add("hideOverflow");
+};
+
 // Инициализация св-в приложения
 d.addEventListener('DOMContentLoaded', () => {
     C(d).bind('deviceready', function () {
@@ -166,12 +244,14 @@ d.addEventListener('DOMContentLoaded', () => {
                     C().setStor(LS_PUSHID, token);
                 });
                 messaging.onMessage(function (payload) {
+                    C().setStor("new_push", "123");
                     let gcm = payload.gcm;
                     showPopup(gcm.title, gcm.body);
                 });
                 messaging.onBackgroundMessage(function (payload) {
-                    let gcm = payload.gcm;
-                    showPopup(gcm.title, gcm.body);
+                    if (payload.news) {
+                        openNews(payload.news);
+                    }
                 });
                 break;
             case "iOS":
@@ -186,7 +266,7 @@ d.addEventListener('DOMContentLoaded', () => {
                     showPopup(gcm.title, gcm.body);
                 });
                 cordova.plugins.firebase.messaging.onBackgroundMessage(function (payload) {
-                    //
+                    openNews(payload.news);
                 });
                 break;
         }
@@ -1456,6 +1536,7 @@ async function checkUpdates(callback) {
 
     if (status) {
         if (data.news.length) {
+            C().setStor("LS_News", JSON.stringify(data.news));
             updates.newsHash = data.newsHash;
             drawNews(data.news);
         }

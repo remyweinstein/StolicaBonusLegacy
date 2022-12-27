@@ -244,11 +244,14 @@ class LMX {
                     $lifeTimes = [];
 
                     if (!empty($methodResult["data"]->data->items[0]->lifeTimesByTime))
-                        foreach($methodResult["data"]->data->items[0]->lifeTimesByTime as $value)
-                            array_push($lifeTimes, [
-                                "amount" => $value->amount * 100,
-                                "date" => $value->date
-                            ]);
+                        foreach($methodResult["data"]->data->items[0]->lifeTimesByTime as $value) {
+                            if ($value->amount >= 1) {
+                                array_push($lifeTimes, [
+                                    "amount" => $value->amount * 100,
+                                    "date" => $value->date
+                                ]);
+                            }
+                        }
 
                     $result["status"] = true;
                     $result["data"] = [

@@ -3918,6 +3918,7 @@ class BonusApp
 
             $query = $this->pdo->prepare("SELECT
                     purchases.sale_time AS operation_date,
+                    purchases.operation_type AS operation_type,
                     stores.title AS store_title,
                     stores.description AS store_description,
                     purchases.id,
@@ -3968,6 +3969,7 @@ class BonusApp
                         array_push($purchases, [
                             "id"                => $row["id"],
                             "operation_date"    => $row["operation_date"],
+                            "operation_type"    => $row["operation_type"],
                             "store_title"       => $row["store_title"],
                             "store_description" => $row["store_description"],
                             "amount"            => $row["purchase_amount"],

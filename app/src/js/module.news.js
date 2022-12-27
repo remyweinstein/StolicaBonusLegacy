@@ -1,20 +1,4 @@
-/* global C, d, DOMAIN */
-
-function getCodeByCity(city) {
-    let code = "d";
-
-    if (city=="Хабаровск") {
-        code = "a";
-    }
-    if (city=="Николаевск на Амуре") {
-        code = "b";
-    }
-    if (city=="Зея" || city=="Новый Ургал" || city=="Тында" || city=="Чегдомын") {
-        code = "c";
-    }
-
-    return code;
-}
+/* global C, d, DOMAIN, getCodeByCity, openNews */
 
 function drawNews(newsList) {
     
@@ -61,31 +45,7 @@ function drawNews(newsList) {
         const newsContEl = C().strToNode(temp);
 
         container.el.prepend(newsContEl.el);
-        
-        newsContEl.bind("click", () => {
-            const el = C(".newsOverlay");
-
-            show(".newsOverlay");
-            
-            C("img", el).el.src = imageSrc;
-
-            if (news.catalog) {
-                let code = getCodeByCity(city);
-                for (let i = catalog.a; i > 1; i--) {
-                    C(".newsOverlay__image").el.after(C().strToNode(`<img class="newsOverlay__image newsCatalogImage" src="${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/${i}.jpg" alt="">`).el)
-                }
-
-                imageSrc = `${DOMAIN}/app/assets/catalog/${catalog.dir}/${code}/1.jpg`
-                imgElem  = `<img src="${imageSrc}">`;
-                show(".newsOverlay .icon-cancel");
-            }
-    
-            C("h4", el).text(news.title);
-            C("p", el).text(date);
-            C("p", el).els[1].innerHTML = news.description;
-
-            d.body.classList.add("hideOverflow");
-        });
+        newsContEl.el.addEventListener("click", () => openNews(news.id));
     });
 }
 

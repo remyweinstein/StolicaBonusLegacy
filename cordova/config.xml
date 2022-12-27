@@ -1,17 +1,19 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.stolica.bonuses" version="5.5.3" android-versionCode="239" ios-CFBundleVersion="239" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.stolica.bonuses" version="5.5.4" android-versionCode="240" ios-CFBundleVersion="240" ios-CFBundleIdentifier="com.stolica.bonuses" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Столица</name>
     <description>Алкомаркеты Столица - программа лояльности</description>
     <author email="d.grebenyuk30@gmail.com" href="https://bonus.stolica-dv.ru/">
         Отдел разработки ПО - Столица
     </author>
     <content src="index.html" />
-    <allow-navigation href="tel:*" />
+    <access origin="*" />
+    <access origin="mailto:*" launch-external="yes" />
     <access origin="tel:*" launch-external="yes" />
+
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
-    
+
     <platform name="android">
         <resource-file src="res/values/colors.xml" target="app/src/main/res/values/colors.xml"/>
         <preference name="AndroidXEnabled" value="true" />
@@ -29,6 +31,7 @@
         <icon src="icons/192x192.png" density="xxxhdpi" />
     </platform>
     <platform name="ios">
+        <allow-navigation href="tel:*" />
         <!-- iOS 8.0+ -->
         <!-- iPhone 6 Plus  -->
         <icon src="icons/180x180.png" width="180" height="180" />

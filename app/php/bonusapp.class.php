@@ -1542,7 +1542,7 @@ class BonusApp
         }
     }
 
-    public function runNewYearDeposits ($card_numbers)
+    public function runNewYearDeposits($card_numbers)
     {
         $chargeOnResult = $LMX->chargeOns($card_numbers, 5000, 22, "Новый год");
         return $chargeOnResult;

@@ -1407,10 +1407,12 @@ class BonusApp
         if ($operationResult["status"]) {
             $start = microtime(true);
 
-            $this->prepareProlongations();
+            $result = $this->prepareProlongations();
 
             $this->journal("CRON", __FUNCTION__, round(microtime(true) - $start, 2), true);
-            echo round(microtime(true) - $start, 2);
+            echo round(microtime(true) - $start, 2) . "<br>";
+            print_r($result);
+
         }
     }
 
@@ -1433,7 +1435,7 @@ class BonusApp
             "startChequeTime" => $dtStart->format("Y-m-d H:i:s"),
             "lastChequeTime" => $dtEnd->format("Y-m-d H:i:s"),
             "count" => 9999,
-            "from" => 0,
+            "from"  => 0,
             "state" => "Confirmed"
         ]);
 

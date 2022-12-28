@@ -654,7 +654,6 @@ class LMX {
                     "externalInfo": ""
                 },';
             }
-            echo($str);
 
             $rawData = '{
                 "operations": [
@@ -716,18 +715,29 @@ class LMX {
         if ($result["status"]) {
             $type = ($deposit ? "Deposit" : "Withdraw");
 
+            if (!is_array($cardNumber)) {
+                $cardNumber = [$cardNumber];
+            }
+
+            $str = "";
+            foreach($cardNumber as $number) {
+                $str .= '
+                {
+                    "Identifier": "' . $number . '",
+                    "identifierType": "cardNumber",
+                    "amount": ' . $amount . ',
+                    "description": "",
+                    "externalInfo": ""
+                }
+            ';
+            }
+
             $rawData = '{
                 "operations": [
-                    {
-                        "Identifier": "'.$cardNumber.'",
-                        "identifierType": "cardNumber",
-                        "amount": '.$amount.',
-                        "description": "",
-                        "externalInfo": ""
-                    }
+                    ' . $str . '
                 ],
                 "lifeTimeDefinition": {
-                    "id": '.$extId.'
+                    "id": ' . $extId . '
                 },
                 "legal": {
                     "id": 12,
@@ -760,8 +770,8 @@ class LMX {
                 },
                 "targetGroup": null,
                 "type": "' . $type . '",
-                "description": "'.$description.'",
-                "internalDescription": "'.$description.'"
+                "description": "' . $description . '",
+                "internalDescription": "' . $description . '"
             }';
 
             $result = $this->SAPI_Deposit($rawData);

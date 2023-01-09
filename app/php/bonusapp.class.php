@@ -93,6 +93,12 @@ class BonusApp
                     break;
                 }
 
+            case "add-newyear": {
+                    $result = $this->initPDO();
+                    $this->runNewYearDeposits();
+                    break;
+                }
+
             case "add-mailing": {
                     $result = $this->initPDO();
 
@@ -1401,10 +1407,12 @@ class BonusApp
         if ($operationResult["status"]) {
             $start = microtime(true);
 
-            $this->prepareProlongations();
+            $result = $this->prepareProlongations();
 
             $this->journal("CRON", __FUNCTION__, round(microtime(true) - $start, 2), true);
-            echo round(microtime(true) - $start, 2);
+            echo round(microtime(true) - $start, 2) . "<br>";
+            print_r($result);
+
         }
     }
 
@@ -1427,7 +1435,7 @@ class BonusApp
             "startChequeTime" => $dtStart->format("Y-m-d H:i:s"),
             "lastChequeTime" => $dtEnd->format("Y-m-d H:i:s"),
             "count" => 9999,
-            "from" => 0,
+            "from"  => 0,
             "state" => "Confirmed"
         ]);
 
@@ -1535,6 +1543,43 @@ class BonusApp
             $this->journal("CRON", __FUNCTION__, round(microtime(true) - $start, 2), true);
             echo round(microtime(true) - $start, 2);
         }
+    }
+
+    public function runNewYearDeposits()
+    {
+        $query = $this->pdo->prepare("SELECT `id` FROM `accounts` WHERE `status`=1");
+        $query->execute();
+        $queryResult = $query->fetchAll();
+        $array = [];
+        $ids = [];
+        $i = 0;
+        
+        foreach ($queryResult as $fields) {
+            $i++;
+            $queryk = $this->pdo->prepare("SELECT `card_number`, `status` FROM `bonuscards` WHERE `account_id` = " . $fields['id']);
+            $queryk->execute();
+            $querykResult = $queryk->fetchAll();
+
+            if (count($querykResult) > 1) {
+                if ($querykResult[0]['status'] == 0) {
+                    $array[] = $querykResult[0]['card_number'];
+                } else if ($querykResult[1]['status'] == 0) {
+                    $array[] = $querykResult[1]['card_number'];
+                }
+            } else {
+                $array[] = $querykResult[0]['card_number'];
+            }
+
+            if ($i > 5000) {
+                $LMX = $this->getLMX();
+                //$chargeOnResult = $LMX->chargeOns($array, 5000, 22, "Новый год");
+                foreach ($ids as $id) {
+                    echo $id . "<br>";
+                }
+                $i = 0;
+                $array = []; $ids = [];
+            }
+        }        
     }
 
     public function executeProlongations($limit)

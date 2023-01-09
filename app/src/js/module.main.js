@@ -21,6 +21,7 @@ let resetCodeTimerValue = 0;
 let viewNewApp = 1;
 let currentBrightness;
 let newNotifies = false;
+let newsPush = null;
 
 const carouselSections = [
     'news',
@@ -151,6 +152,14 @@ const getCodeByCity = (city) => {
     return code;
 }
 
+const checkPushNews = (id) => {
+    if (C().getStor("news_push") == id && newsPush) {
+        newsPush = null;
+        C().setStor("news_push", null);
+        C().delStor("news_push");
+    }
+}
+
 const openNews = (id) => {
     const listNews = JSON.parse(C().getStor("LS_News"));
     let news;
@@ -163,9 +172,10 @@ const openNews = (id) => {
 
     listNews.forEach(newsly => {
         if (newsly.id == id) {
+            checkPushNews(id);
             news = newsly;
             imageSrc = `${DOMAIN}/${news.image}`;
-            date   = news.date_to_post.split("-").reverse().join(".");
+            date = news.date_to_post.split("-").reverse().join(".");
 
             if (news.catalog) {
                 catalog = JSON.parse(news.catalog);
@@ -215,7 +225,7 @@ const openNews = (id) => {
 
 // Инициализация св-в приложения
 d.addEventListener('DOMContentLoaded', () => {
-    C(d).bind('deviceready', function () {
+    C(d).bind('deviceready', () => {
         let brightness = cordova.plugins.brightness;
 
         brightness.getBrightness((res) => {
@@ -227,7 +237,7 @@ d.addEventListener('DOMContentLoaded', () => {
         clientDevice = `${device.platform} ${device.version} (${device.manufacturer} ${device.model})`;
         platform = device.platform;
 
-        cordova.getAppVersion.getVersionCode(function (version) {
+        cordova.getAppVersion.getVersionCode((version) => {
             versionApp = version;
             clientInfo = `${device.platform} v${versionApp}`;
         });
@@ -240,38 +250,44 @@ d.addEventListener('DOMContentLoaded', () => {
             case "Android":
                 let messaging = cordova.plugins.firebase.messaging;
 
-                messaging.getToken().then(function (token) {
+                messaging.getToken().then((token) => {
                     C().setStor(LS_PUSHID, token);
                 });
-                messaging.onMessage(function (payload) {
+                messaging.onMessage((payload) => {
                     C().setStor("new_push", "123");
                     let gcm = payload.gcm;
                     showPopup(gcm.title, gcm.body);
                 });
-                messaging.onBackgroundMessage(function (payload) {
+                messaging.onBackgroundMessage((payload) => {
                     if (payload.news) {
+                        C().setStor("news_push", payload.news);
+                        newsPush = payload.news;
                         openNews(payload.news);
                     }
                 });
                 break;
             case "iOS":
-                cordova.plugins.firebase.messaging.requestPermission({forceShow: false}).then(function() {
+                cordova.plugins.firebase.messaging.requestPermission({forceShow: false}).then(() => {
                     //console.log("Push messaging is allowed");
                 });
-                cordova.plugins.firebase.messaging.getToken().then(function (token) {
+                cordova.plugins.firebase.messaging.getToken().then((token) => {
                     C().setStor(LS_PUSHID, token);
                 });
-                cordova.plugins.firebase.messaging.onMessage(function (payload) {
+                cordova.plugins.firebase.messaging.onMessage((payload) => {
                     let gcm = payload.gcm;
                     showPopup(gcm.title, gcm.body);
                 });
-                cordova.plugins.firebase.messaging.onBackgroundMessage(function (payload) {
-                    openNews(payload.news);
+                cordova.plugins.firebase.messaging.onBackgroundMessage((payload) => {
+                    if (payload.news) {
+                        C().setStor("news_push", payload.news);
+                        newsPush = payload.news;
+                        openNews(payload.news);
+                    }
                 });
                 break;
         }
 
-        C(d).bind('backbutton', function (e) {
+        C(d).bind('backbutton', (e) => {
             e.preventDefault();
 
             if (!closeOpenOverlays()) {
@@ -1539,6 +1555,9 @@ async function checkUpdates(callback) {
             C().setStor("LS_News", JSON.stringify(data.news));
             updates.newsHash = data.newsHash;
             drawNews(data.news);
+            if (C().getStor("news_push") && newsPush) {
+                openNews(C().getStor("news_push"));
+            }        
         }
 
         if (data.serverVersion) {
